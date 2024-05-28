@@ -1,15 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
-###Python file for udf function
-
-
-# In[ ]:
-
-
 def run_experiment(sf_pass, dataset, target):
     import os
     from snowflake.snowpark import Session
