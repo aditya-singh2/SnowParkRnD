@@ -1,5 +1,4 @@
 def run_experiment(sf_pass, dataset, target):
-    import os
     from snowflake.snowpark import Session
     import numpy as np
     import pandas as pd
