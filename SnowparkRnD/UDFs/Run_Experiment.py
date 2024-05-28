@@ -23,7 +23,7 @@ def run_experiment(sf_pass, dataset, target):
     connection_parameters = {
     "account": "ug94937.us-east4.gcp",
     "user": "ADITYASINGH",
-    "password": sf_pass
+    "password": sf_pass,
     "role": "ADITYASINGH",  # optional
     "warehouse": "FOSFOR_INSIGHT_WH",  # optional
     "database": "FIRST_DB",  # optional
