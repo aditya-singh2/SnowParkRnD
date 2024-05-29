@@ -4,7 +4,7 @@
 # In[34]:
 
 
-def run_exp(session, algos, dataset, target):    
+def run_exp(algos, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
     from snowflake.ml.modeling.pipeline import Pipeline
