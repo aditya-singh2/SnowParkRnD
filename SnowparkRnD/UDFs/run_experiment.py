@@ -5,14 +5,14 @@
 
 
 def run_exp(algos, dataset, target):    
-#     import os, importlib
-#     from snowflake.snowpark import Session
-#     from snowflake.ml.modeling.pipeline import Pipeline
-#     from snowflake.ml.modeling.preprocessing import MinMaxScaler, OrdinalEncoder
-#     from snowflake.ml.modeling.metrics import mean_squared_error, mean_absolute_error, r2_score
-#     from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
-#     from snowflake.ml.modeling.compose import ColumnTransformer
-#     from snowflake.snowpark import Session, FileOperation
+    import os, importlib
+    from snowflake.snowpark import Session
+    from snowflake.ml.modeling.pipeline import Pipeline
+    from snowflake.ml.modeling.preprocessing import MinMaxScaler, OrdinalEncoder
+    from snowflake.ml.modeling.metrics import mean_squared_error, mean_absolute_error, r2_score
+    from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
+    from snowflake.ml.modeling.compose import ColumnTransformer
+    from snowflake.snowpark import Session, FileOperation
     
 #     connection_parameters = {
 #     "account": "ug94937.us-east4.gcp",
