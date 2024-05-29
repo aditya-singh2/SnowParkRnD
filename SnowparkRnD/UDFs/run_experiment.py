@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[34]:
-
-
 def run_exp(sf_pass, algos, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
@@ -115,5 +109,5 @@ def run_exp(sf_pass, algos, dataset, target):
         print(f'{algorithm[1]} MAE: {mae}')
         print(f'{algorithm[1]} R2: {r2}')
         
-    return df_all_pred
+    return 'success'
 
