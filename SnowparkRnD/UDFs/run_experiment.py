@@ -25,7 +25,7 @@ def run_exp(algos, dataset, target):
 #     }
 #     session = Session.builder.configs(connection_parameters).create()
     
-#     session = get_active_session() 
+    session = get_active_session() 
     
     # Read dataset
     df_train, df_test = session.table(dataset).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
