@@ -1,6 +1,10 @@
-def run_exp(sf_pass, dataset, target):    
-    algos = ['snowflake.ml.modeling.naive_bayes.GaussianNB',
-             'snowflake.ml.modeling.neighbors.KNeighborsClassifier']
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[34]:
+
+
+def run_exp(sf_pass, algos, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
     from snowflake.ml.modeling.pipeline import Pipeline
@@ -111,5 +115,5 @@ def run_exp(sf_pass, dataset, target):
         print(f'{algorithm[1]} MAE: {mae}')
         print(f'{algorithm[1]} R2: {r2}')
         
-    return 'Success'
+    return df_all_pred
 
