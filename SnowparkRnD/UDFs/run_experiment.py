@@ -111,5 +111,5 @@ def run_exp(sf_pass, dataset, target):
         print(f'{algorithm[1]} MAE: {mae}')
         print(f'{algorithm[1]} R2: {r2}')
         
-    return df_all_pred
+    return 'Success'
 
