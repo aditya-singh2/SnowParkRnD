@@ -19,7 +19,7 @@ def run_exp(sf_pass, algos, dataset, target):
     } 
     
     session = Session.builder.configs(connection_parameters).create()
-#     session.sql_simplifier_enabled = True
+    session.sql_simplifier_enabled = True
     
     # Read dataset
     df_train, df_test = session.table(dataset).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
