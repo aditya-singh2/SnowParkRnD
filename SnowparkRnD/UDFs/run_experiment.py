@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[34]:
-
-
 def run_exp(sf_pass, algos, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
