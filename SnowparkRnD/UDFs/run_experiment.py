@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[34]:
+
+
 def run_exp(sf_pass, algos, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
@@ -7,19 +13,6 @@ def run_exp(sf_pass, algos, dataset, target):
     from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
     from snowflake.ml.modeling.compose import ColumnTransformer
     from snowflake.snowpark import Session, FileOperation
-
-    connection_parameters = {
-        "account": "ug94937.us-east4.gcp",
-        "user": "ADITYASINGH",
-        "password": sf_pass,
-        "role": "ADITYASINGH",  # optional
-        "warehouse": "FOSFOR_INSIGHT_WH",  # optional
-        "database": "FIRST_DB",  # optional
-        "schema": "PUBLIC",  # optional
-    } 
-    
-    session = Session.builder.configs(connection_parameters).create()
-    session.sql_simplifier_enabled = True
     
     # Read dataset
     df_train, df_test = session.table(dataset).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
@@ -109,5 +102,5 @@ def run_exp(sf_pass, algos, dataset, target):
         print(f'{algorithm[1]} MAE: {mae}')
         print(f'{algorithm[1]} R2: {r2}')
         
-    return 'success'
+    return df_all_pred
 
