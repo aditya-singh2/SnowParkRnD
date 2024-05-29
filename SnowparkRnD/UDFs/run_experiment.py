@@ -13,6 +13,9 @@ def run_exp(session, algos, dataset, target):
     from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
     from snowflake.ml.modeling.compose import ColumnTransformer
     from snowflake.snowpark import Session, FileOperation
+    from snowflake.snowpark.context import get_active_session
+    
+    session = get_active_session() 
     
     # Read dataset
     df_train, df_test = session.table(dataset).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
