@@ -13,9 +13,19 @@ def run_exp(algos, dataset, target):
     from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
     from snowflake.ml.modeling.compose import ColumnTransformer
     from snowflake.snowpark import Session, FileOperation
-    from snowflake.snowpark.context import get_active_session
     
-    session = get_active_session() 
+    connection_parameters = {
+    "account": "ug94937.us-east4.gcp",
+    "user": "ADITYASINGH",
+    "password": os.environ.get('SF_Password'),
+    "role": "ADITYASINGH",  # optional
+    "warehouse": "FOSFOR_INSIGHT_WH",  # optional
+    "database": "FIRST_DB",  # optional
+    "schema": "PUBLIC",  # optional
+    }
+    session = Session.builder.configs(connection_parameters).create()
+    
+#     session = get_active_session() 
     
     # Read dataset
     df_train, df_test = session.table(dataset).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
