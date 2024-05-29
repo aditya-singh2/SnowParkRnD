@@ -1,4 +1,6 @@
 def run_exp(sf_pass, dataset, target):    
+    algos = ['snowflake.ml.modeling.naive_bayes.GaussianNB',
+             'snowflake.ml.modeling.neighbors.KNeighborsClassifier']
     import os, importlib
     from snowflake.snowpark import Session
     from snowflake.ml.modeling.pipeline import Pipeline
