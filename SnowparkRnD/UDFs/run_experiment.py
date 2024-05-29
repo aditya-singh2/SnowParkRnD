@@ -1,4 +1,4 @@
-def run_exp(sf_pass, algos, dataset, target):    
+def run_exp(sf_pass, dataset, target):    
     import os, importlib
     from snowflake.snowpark import Session
     from snowflake.ml.modeling.pipeline import Pipeline
