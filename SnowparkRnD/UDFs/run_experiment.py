@@ -13,6 +13,7 @@ def run_exp(algos, dataset, target):
     from snowflake.snowpark.types import StructType, StructField, IntegerType, StringType
     from snowflake.ml.modeling.compose import ColumnTransformer
     from snowflake.snowpark import Session, FileOperation
+    from snowflake.snowpark.context import get_active_session
     
 #     connection_parameters = {
 #     "account": "ug94937.us-east4.gcp",
