@@ -85,7 +85,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     
     # Define a pipeline that does the preprocessing and training of 
     # dynamically import selected algorithms
-    for algorithm, hyperparam in exp_details.get("algo_details").items()::
+    for algorithm, hyperparam in exp_details.get("algo_details").items():
         algorithm = algorithm.rsplit('.', 1)
         module = importlib.import_module(algorithm[0])
         print(algorithm[1])
