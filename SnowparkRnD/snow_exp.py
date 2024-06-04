@@ -58,7 +58,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     features.remove(exp_details.get("target_column"))
     
     # get features
-    data_schema = session.sql(f"DESCRIBE TABLE {exp_details.get("dataset")}").collect()
+    data_schema = session.sql(f"DESCRIBE TABLE {exp_details.get('dataset')}").collect()
     categorical_types = ['VARCHAR','CHAR','STRING','TEXT','BOOL']
     categorical_features = []
     for row in data_schema:
