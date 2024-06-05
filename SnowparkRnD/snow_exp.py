@@ -52,6 +52,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logger = logging.getLogger()
+    logger.info("Imports Done! Starting Experiment Recipe Execution")
     
     # Experiment details
     exp_details=json.loads(exp_data)
@@ -92,7 +93,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     for algorithm, hyperparam in exp_details.get("algo_details").items():
         algorithm = algorithm.rsplit('.', 1)
         module = importlib.import_module(algorithm[0])
-        print(algorithm[1])
+        logger.info(algorithm[1])
         attr = getattr(module, algorithm[1])
         
         pipe = Pipeline(steps=steps+[("algorithm", attr(input_cols=categorical_features_oe+numerical_features
@@ -129,10 +130,10 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                                version_name="run1",
                                python_version="3.9.19",
                                conda_dependencies=["scikit-learn==1.3.2"],
-                               metrics={"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"})
+                               metrics=[{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"}])
         except Exception as ex:
             logger.info("Got exception while logging:", ex)
-            pass
+            return ex
     return [{"EXP_NAME":exp_details.get("name", "sample_experiment"),
              "Version":"Run1",
              "matrices":{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"},
