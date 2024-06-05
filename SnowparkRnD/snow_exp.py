@@ -125,7 +125,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
         try:
             logger.info("logging model")
             mv = reg.log_model(model=model,
-                               model_name=exp_details.get("name", "sample_experiment")+"_"+algorithm,
+                               model_name=exp_details.get("name", "sample_experiment")+"_"+algorithm[1],
                                comment="test",
                                version_name="run1",
                                python_version="3.9.19",
