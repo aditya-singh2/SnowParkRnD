@@ -132,7 +132,11 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                                conda_dependencies=["scikit-learn==1.3.2"],
                                metrics=[{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"}])
         except Exception as ex:
-            return [ex]
+            key = 'Processing aborted due to error 370001' 
+            if key in str(ex):
+                pass
+            else:
+                return str(ex).split('?')
     return [{"EXP_NAME":exp_details.get("name", "sample_experiment"),
              "Version":"Run1",
              "matrices":{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"},
