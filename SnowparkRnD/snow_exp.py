@@ -137,7 +137,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
 
 
 # Initilization
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 print("Creating Snowflake Session object...")
 session = get_session()
 stage = create_stage(session)
