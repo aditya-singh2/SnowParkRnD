@@ -133,7 +133,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                                metrics=[{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"}])
         except Exception as ex:
             logger.info("Got exception while logging:", ex)
-            return ex
+            return [ex]
     return [{"EXP_NAME":exp_details.get("name", "sample_experiment"),
              "Version":"Run1",
              "matrices":{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"},
