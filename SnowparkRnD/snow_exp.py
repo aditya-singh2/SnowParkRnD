@@ -47,7 +47,11 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     from snowflake.ml.modeling.metrics import mean_squared_error, mean_absolute_error, r2_score
     from snowflake.ml.modeling.xgboost import XGBRegressor
     import importlib, os, json
+    import logging
     # from snowflake.snowpark import Session, FileOperation
+    
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    logger = logging.getLogger()
     
     # Experiment details
     exp_details=json.loads(exp_data)
@@ -118,6 +122,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
         # Log the model
         model_name = f"expname_{algorithm}"
         try:
+            logger.info("logging model")
             mv = reg.log_model(model=model,
                                model_name=exp_details.get("name", "sample_experiment")+"_"+algorithm,
                                comment="test",
@@ -126,7 +131,8 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                                conda_dependencies=["scikit-learn==1.3.2"],
                                metrics={"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"})
         except Exception as ex:
-            return ex
+            logger.info("Got exception while logging:", ex)
+            pass
     return [{"EXP_NAME":exp_details.get("name", "sample_experiment"),
              "Version":"Run1",
              "matrices":{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"},
