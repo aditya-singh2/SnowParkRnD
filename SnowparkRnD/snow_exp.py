@@ -41,23 +41,28 @@ def get_session():
 
 
 # Stored Procedure
-def train_ml_models(session: Session, exp_data: str) -> list:
+def train_ml_models(session: Session, exp_data: str) -> list:   
     from snowflake.ml.modeling.pipeline import Pipeline
     from snowflake.ml.modeling.preprocessing import MinMaxScaler, OrdinalEncoder
     from snowflake.ml.modeling.metrics import mean_squared_error, mean_absolute_error, r2_score
     from snowflake.ml.modeling.xgboost import XGBRegressor
     import importlib, os, json
     import logging
-    # from snowflake.snowpark import Session, FileOperation
     
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-    logger = logging.getLogger()
-    logger.info("Imports Done! Starting Experiment Recipe Execution")
+     # variable for holding logs
+    logs = []
+    
+    # function for accumulating logs
+    def log_message(level: str, message: str):
+        logs.append(f"{level}: {message}")
+    
+    log_message("INFO","Starting Experiment Recipe Execution")
     
     # Experiment details
     exp_details=json.loads(exp_data)
     
     # Read dataset, Random split
+    log_message("INFO","Identifing dataset features")
     df_train, df_test = session.table(exp_details.get("dataset")).drop('ROW').random_split(weights=[0.9, 0.1], seed=0)
     features = df_train.columns
     features.remove(exp_details.get("target_column"))
@@ -73,11 +78,12 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                 break
     numerical_features = list(set(features) - set(categorical_features))
     categorical_features_oe = list(map(lambda a: a+'_OE', categorical_features))
-    print("numerical_features: ", numerical_features)
-    print("categorical_features_oe: ", categorical_features_oe)
+    log_message("INFO",f"numerical_features:  {numerical_features}")
+    log_message("INFO",f"categorical_features_oe: {categorical_features_oe}")
     
     
     #pipeline steps 
+    log_message("INFO","Setting up preprocessing pipeline based on dataset")
     categorical_pp = {
         'ord': OrdinalEncoder(input_cols=categorical_features, output_cols=categorical_features_oe) 
     }
@@ -93,7 +99,7 @@ def train_ml_models(session: Session, exp_data: str) -> list:
     for algorithm, hyperparam in exp_details.get("algo_details").items():
         algorithm = algorithm.rsplit('.', 1)
         module = importlib.import_module(algorithm[0])
-        logger.info(algorithm[1])
+        log_message("INFO",f"Running Algorithm {algorithm[1]}")
         attr = getattr(module, algorithm[1])
         
         pipe = Pipeline(steps=steps+[("algorithm", attr(input_cols=categorical_features_oe+numerical_features
@@ -102,44 +108,54 @@ def train_ml_models(session: Session, exp_data: str) -> list:
                )
 
         # Fit the pipeline
+        log_message("INFO",f"Running model pipeline {algorithm[1]}")
         model = pipe.fit(df_train)
          
         # Test the model
+        log_message("INFO","Running prediction on model with test dataset")
         df_test_pred = model.predict(df_test)
         
         # metrices
-        mse = mean_squared_error(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
-        mae = mean_absolute_error(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
-        r2 = r2_score(df=df_test_pred, y_true_col_name=exp_details.get("target_column"), y_pred_col_name=f'PREDICTIONS_{algorithm[1]}'.upper())
-        print("Execution Completed")
-        print(f'{algorithm[1]} MSE: {mse}')
-        print(f'{algorithm[1]} MAE: {mae}')
-        print(f'{algorithm[1]} R2: {r2}')
+        log_message("INFO","Generating Metrices")
+        accuracy = accuracy_score(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
+        f1_score = f1_score(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
+        recall_score = recall_score(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
+        precision_score = precision_score(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_pred_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
+        roc_auc_score = roc_auc_score(df=df_test_pred, y_true_col_names=exp_details.get("target_column"), y_score_col_names=f'PREDICTIONS_{algorithm[1]}'.upper())
+        log_message("INFO","Metrices generation completed!!!")
+        log_message("INFO",f'{algorithm[1]} accuracy: {accuracy}')
+        log_message("INFO",f'{algorithm[1]} f1_score: {f1_score}')
+        log_message("INFO",f'{algorithm[1]} recall_score: {recall_score}')
+        log_message("INFO",f'{algorithm[1]} precision_score: {precision_score}')
+        log_message("INFO",f'{algorithm[1]} roc_auc_score: {roc_auc_score}')
         
 
         # LOG MODEL INTO SNOWFLAKE REGISTRY
         from snowflake.ml.registry.registry import Registry
         reg = Registry(session=session)
         # Log the model
-#         model_name = f"expname_{algorithm}"
+        log_message("INFO","Started: Registering model on snowflake")
         try:
-            logger.info("logging model")
             mv = reg.log_model(model=model,
                                model_name=exp_details.get("name", "sample_experiment")+"_"+algorithm[1],
                                comment="test",
                                version_name="run1",
                                python_version="3.9.19",
                                conda_dependencies=["scikit-learn==1.3.2"],
-                               metrics=[{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"}])
+                               metrics=[{"model_metrics": {"roc_auc_score": roc_auc_score, "precision_score": precision_score, "f1_score": f1_score, "recall_score": recall_score, "accuracy_score": accuracy}, "project_id": "0001", "type": "EXP"}])
+            log_message("INFO","Registeration of model completed!!!")
         except Exception as ex:
             key = 'Processing aborted due to error 370001' 
             if key in str(ex):
+                log_message("INFO","Registeration of model completed!!!")
                 pass
             else:
+                log_message("ERROR","Exception Occured while registering model")
                 return str(ex).split('?')
-    return [{"EXP_NAME":exp_details.get("name", "sample_experiment"),
+    return [{"Execution Logs:": "\n".join(logs),
+             "EXP_NAME":exp_details.get("name", "sample_experiment"),
              "Version":"Run1",
-             "matrices":{"model_metrics": {"MSE": mse, "MAE": mae, "r2": r2}, "project_id": "0001", "type": "EXP"},
+             "matrices":{"model_metrics": {"roc_auc_score": roc_auc_score, "precision_score": precision_score, "f1_score": f1_score, "recall_score": recall_score, "accuracy_score": accuracy}, "project_id": "0001", "type": "EXP"},
              "Alogirthm_Type":"Regression",
              "Alogithms": list(exp_details.get("algo_details").keys()),
              "RUN_STATUS":"SUCCESS",
