@@ -1,24 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import logging, sys, os
 from snowflake.snowpark.session import Session
 from snowflake.ml.registry.registry import Registry
 
-CONNECTION_PARAMETERS = {
-    "account": "ug94937.us-east4.gcp",
-    "user":"ADITYASINGH",
-    "password": os.environ.get('SF_Password'),
-    "role": "ADITYASINGH",
-    "database": "FIRST_DB",
-    "warehouse": "FOSFOR_INSIGHT_WH",
-    "schema": "PUBLIC",
-}
-
-exp_data = os.getenv("EXPERIMENT_DETAILS")
 
 def create_stage(session, stage_name="demo"):
     try:
@@ -28,12 +11,26 @@ def create_stage(session, stage_name="demo"):
         print("Error while creating snowflake session", ex)
         raise ex
 
-def get_session():
+def get_session(dataset, project_id):
     """
     Method creates snowflake session object.
     :return:
     """
     try:
+        conn = get_conn_details_from_ds_name(dataset, project_id)
+        region=conn["params"]["READER"]["region"] if conn["params"]["READER"]["cloudPlatform"] is None \
+                    else conn["params"]["READER"]["region"]+"."+conn["params"]["READER"]["cloudPlatform"]
+        account = conn['params']['READER']['accountId'] if region is None \
+                    else conn['params']['READER']['accountId']+"."+region
+        CONNECTION_PARAMETERS = {
+            "account": account,
+            "user":conn['params']['READER']['user'],
+            "password": conn['params']['READER']['password'],
+            "role": conn['params']['READER']['role'],
+            "database": conn['params']['READER']['database'],
+            "warehouse": conn['params']['READER']['wareHouse'],
+            "schema": conn['params']['READER']['schema']
+        }
         return Session.builder.configs(CONNECTION_PARAMETERS).create()
     except Exception as ex:
         print("Error while creating snowflake session", ex)
