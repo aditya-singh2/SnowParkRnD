@@ -324,7 +324,7 @@ def create_sproc(session, stage, func_name="run_experiment"):
 def initiate_sproc_process(session, payload, sproc_name="run_experiment"):
     exp_details = json.loads(payload)
     print("Creating Snowflake Session object...")
-#     session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
+    session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
     print("Session has been created !")
     stage = create_stage(session)
     print("Creating stored procedure...")
