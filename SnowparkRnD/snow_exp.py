@@ -20,6 +20,7 @@ def get_session(dataset, project_id):
     """
     try:
         conn = get_conn_details_from_ds_name(dataset, project_id)
+        print(conn)
         region=conn["params"]["READER"]["region"] if conn["params"]["READER"]["cloudPlatform"] is None \
                     else conn["params"]["READER"]["region"]+"."+conn["params"]["READER"]["cloudPlatform"]
         account = conn['params']['READER']['accountId'] if region is None \
