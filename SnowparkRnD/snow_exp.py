@@ -332,8 +332,8 @@ def initiate_sproc_process(payload, sproc_name="run_experiment"):
     print("Stored procedure has been created successfully!")
     print("Executing Procedure")
     sproc_response = session.call(sproc_name, payload)
-#     sproc_response = sf.run_experiment(session,payload)
     print("Stored Procedure Executed Successfully !")
+    print(sproc_response)
     return sproc_response
 
 # # Initilization
