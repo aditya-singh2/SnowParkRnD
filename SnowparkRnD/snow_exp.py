@@ -322,7 +322,7 @@ def create_sproc(session, stage, func_name="run_experiment"):
     print("Creating stored procedure...")
     session.custom_package_usage_config['enabled'] = True
     session.sproc.register(func=run_experiment,
-                           name=func_name,
+                           name="run_experiment",
                            packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
                            isPermanant=False,
                            stage_location=stage,
