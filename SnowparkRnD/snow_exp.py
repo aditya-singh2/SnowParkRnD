@@ -1,5 +1,4 @@
 import logging, sys, os
-from snowflake.ml.registry.registry import Registry
 from fosforio.manager import get_conn_details_from_ds_name
 from snowflake.snowpark.session import Session
 import json
@@ -347,29 +346,9 @@ def initiate_sproc_process(payload, sproc_name="run_experiment"):
     print(sproc_response)
     return sproc_response
 
-
-
+    
 # # Initilization
 # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-# import uuid
-# # project_id = str(uuid.uuid4())
-# run_id = str(uuid.uuid4())
-# print(run_id)
-# # payload-1 (classification Airline Delay dataset)
-# exp_data = '''{{
-# "source":"EXP", 
-# "project_id":"0e0fb803-22db-4d88-9f2f-f6f75b6abcf0", 
-# "id":"7bbb5061-54d4-4862-8d47-7fbee388a4d1", 
-# "run_id":"{0}", 
-# "exp_name": "Final_recipe", 
-# "algorithm_type":"classification", 
-# "algo_details": {{"snowflake.ml.modeling.xgboost.XGBClassifier": null}}, 
-# "dataset": "AIRLINE_DEP_DELAY_10K", 
-# "target_column": "DEP_DEL15"}}'''.format(run_id)
-
-# procedure_response = initiate_sproc_process(exp_data)
-# print(procedure_response)
-
 # print("Creating Snowflake Session object...")
 # exp_details=json.loads(exp_data)
 # session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
