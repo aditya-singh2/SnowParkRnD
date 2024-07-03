@@ -331,14 +331,13 @@ def create_sproc(session, stage, func_name="run_experiment"):
 
     
 def initiate_sproc_process(payload, sproc_name="run_experiment"):
-    import .snow_exp
     exp_details = json.loads(payload)
     print("Creating Snowflake Session object...")
     session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
     print("Session has been created !")
     stage = create_stage(session)
     print("Creating stored procedure...")
-    session.add_import("/notebooks/notebooks/SnowparkRnD/snow_exp.py", import_path=".snow_exp")
+    session.add_import("/notebooks/notebooks/SnowparkRnD/snow_exp.py", import_path="snow_exp")
     create_sproc(session, stage)
     print("Stored procedure has been created successfully!")
     print("Executing Procedure")
