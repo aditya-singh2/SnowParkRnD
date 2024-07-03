@@ -308,27 +308,27 @@ def run_experiment(session: Session, exp_data: str) -> list:
             return str(ex).split('?')
 
 
-# Initilization
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-print("Creating Snowflake Session object...")
-session = get_session()
-stage = create_stage(session)
-print("Session has been created !")
+# # Initilization
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# print("Creating Snowflake Session object...")
+# session = get_session()
+# stage = create_stage(session)
+# print("Session has been created !")
 
-print("Creating stored procedure...")
-session.sproc.register(func=train_ml_models,
-                       name="train_ml_models",
-                       packages=["snowflake-snowpark-python", "snowflake-ml-python"],
-                       isPermanant=False,
-                       stage_location=stage,
-                       replace=True)
-print("Stored procedure has been created successfully!")
+# print("Creating stored procedure...")
+# session.sproc.register(func=train_ml_models,
+#                        name="train_ml_models",
+#                        packages=["snowflake-snowpark-python", "snowflake-ml-python"],
+#                        isPermanant=False,
+#                        stage_location=stage,
+#                        replace=True)
+# print("Stored procedure has been created successfully!")
 
-print("Executing Stored Procedure")
-procedure_response = session.call("train_ml_models", exp_data)
-print("Stored Procedure Executed Successfully !")
-print(procedure_response)
+# print("Executing Stored Procedure")
+# procedure_response = session.call("train_ml_models", exp_data)
+# print("Stored Procedure Executed Successfully !")
+# print(procedure_response)
 
-#Log in mlflow
-print("Logging in mlflow completed !")
+# #Log in mlflow
+# print("Logging in mlflow completed !")
 
