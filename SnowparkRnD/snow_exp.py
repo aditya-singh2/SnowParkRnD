@@ -1,5 +1,4 @@
 import logging, sys, os
-from fosforio.manager import get_conn_details_from_ds_name
 from snowflake.snowpark.session import Session
 import json
 
@@ -27,6 +26,7 @@ def get_session(dataset, project_id):
     Method creates snowflake session object.
     :return:
     """
+    from fosforio.manager import get_conn_details_from_ds_name
     try:
 #         conn = get_conn_details_from_ds_name(dataset, project_id)
 #         print(conn)
