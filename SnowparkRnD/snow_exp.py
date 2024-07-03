@@ -347,7 +347,9 @@ def initiate_sproc_process(payload, sproc_name="run_experiment"):
     print(sproc_response)
     return sproc_response
 
-# Initilization
+
+
+Initilization
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 import uuid
 # project_id = str(uuid.uuid4())
@@ -365,32 +367,34 @@ exp_data = '''{{
 "dataset": "AIRLINE_DEP_DELAY_10K", 
 "target_column": "DEP_DEL15"}}'''.format(run_id)
 
-
-print("Creating Snowflake Session object...")
-exp_details=json.loads(exp_data)
-session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
-stage = create_stage(session)
-print("Session has been created !")
-
-print("Creating stored procedure...")
-session.custom_package_usage_config['enabled'] = True
-session.sproc.register(func=run_experiment,
-                       name="run_experiment",
-                       packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
-                       isPermanant=False,
-                       stage_location=stage,
-                       replace=True)
-print("Stored procedure has been created successfully!")
-
-# tagging session
-print("Setting tag to session object: tag= ", run_id)
-session.query_tag=run_id
-
-print("Executing Procedure")
-procedure_response = session.call("run_experiment", exp_data)
-# procedure_response = run_experiment(session, exp_data)
-print("Stored Procedure Executed Successfully !")
+procedure_response = initiate_sproc_process(exp_data)
 print(procedure_response)
 
-#Log in mlflow
-print("Logging in mlflow completed !")
+# print("Creating Snowflake Session object...")
+# exp_details=json.loads(exp_data)
+# session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
+# stage = create_stage(session)
+# print("Session has been created !")
+
+# print("Creating stored procedure...")
+# session.custom_package_usage_config['enabled'] = True
+# session.sproc.register(func=run_experiment,
+#                        name="run_experiment",
+#                        packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
+#                        isPermanant=False,
+#                        stage_location=stage,
+#                        replace=True)
+# print("Stored procedure has been created successfully!")
+
+# # tagging session
+# print("Setting tag to session object: tag= ", run_id)
+# session.query_tag=run_id
+
+# print("Executing Procedure")
+# procedure_response = session.call("run_experiment", exp_data)
+# # procedure_response = run_experiment(session, exp_data)
+# print("Stored Procedure Executed Successfully !")
+# print(procedure_response)
+
+# #Log in mlflow
+# print("Logging in mlflow completed !")
