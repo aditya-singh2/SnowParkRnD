@@ -305,7 +305,7 @@ def run_experiment(session: Session, exp_data: str) -> list:
             return model_name
         else:
             print("Exception Occured in run experiment")
-            return str(ex).split('?')
+            return str(ex).split('.')
         
         
 def create_sproc(session, stage, func_name="run_experiment"):
