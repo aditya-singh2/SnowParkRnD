@@ -253,43 +253,43 @@ def run_experiment(session: Session, exp_data: str) -> list:
             tag = session.sql(f"ALTER MODEL IF EXISTS {m_name} SET TAG {key}='{value}'")
             tag.show()
     
-    try:
-        # loading experiment details
-        exp_details=json.loads(exp_data)
+#     try:
+    # loading experiment details
+    exp_details=json.loads(exp_data)
+    
+    # creating user tags if not exist
+    create_tags(session, exp_details)
+    
+    # Reading dataset
+    print("Reading dataset features")
+    data = session.table(exp_details.get("dataset"))
+    
+    # fillna
+    data = apply_data_cleansing(data)
+    
+    # Identify feature columns
+    categorical_features, numerical_features, le_column_features, oh_column_features = get_feature_columns(data)
+    
+    # Based on feature, do preprocessing
+    data_train, data_test = create_and_run_preprocessing(data, categorical_features, numerical_features, le_column_features, oh_column_features)
         
-        # creating user tags if not exist
-        create_tags(session, exp_details)
-        
-        # Reading dataset
-        print("Reading dataset features")
-        data = session.table(exp_details.get("dataset"))
-        
-        # fillna
-        data = apply_data_cleansing(data)
-        
-        # Identify feature columns
-        categorical_features, numerical_features, le_column_features, oh_column_features = get_feature_columns(data)
-        
-        # Based on feature, do preprocessing
-        data_train, data_test = create_and_run_preprocessing(data, categorical_features, numerical_features, le_column_features, oh_column_features)
-        
-        # Run model training and prediction
-        input_cols = data_train.columns
-        input_cols.remove(exp_details.get("target_column"))    
-        model, data_pred = run_estimator(data_train, data_test, input_cols)
-        
-        # Evaluate model metrices
-        metrics_info = eval_metrics(data_pred)
-        print(metrics_info)
-        
-        # Register model on snowflake registry
-        model_name = register_model(model, metrics_info)
-        print(model_name)
-        
-        # Set relevant tags to model object
-        set_tags(session, model_name, exp_details, metrics_info)
-        
-        return [{"exp_name":exp_details.get("exp_name", "sample_experiment"),
+    # Run model training and prediction
+    input_cols = data_train.columns
+    input_cols.remove(exp_details.get("target_column"))    
+    model, data_pred = run_estimator(data_train, data_test, input_cols)
+    
+    # Evaluate model metrices
+    metrics_info = eval_metrics(data_pred)
+    print(metrics_info)
+    
+    # Register model on snowflake registry
+    model_name = register_model(model, metrics_info)
+    print(model_name)
+    
+    # Set relevant tags to model object
+    set_tags(session, model_name, exp_details, metrics_info)
+    
+    return [{"exp_name":exp_details.get("exp_name", "sample_experiment"),
              "version":"V1",
              "matrices":{"model_metrics": metrics_info, "project_id": exp_details.get("project_id"), "source": "EXP"},
              "algorithm_type":exp_details.get("algorithm_type"),
@@ -298,14 +298,14 @@ def run_experiment(session: Session, exp_data: str) -> list:
              "target_column": exp_details.get("target_column"),
              "RUN_STATUS": "SUCCESS",
                  "registry_model_name":exp_details.get("exp_name")+"_"+exp_details.get("project_id")+"_"+exp_details.get("id")+"_"+exp_details.get("run_id")}]
-    except Exception as ex:
-        key = 'Processing aborted due to error 370001' 
-        if key in str(ex):
-            print("Registeration of model completed!!!")
-            return model_name
-        else:
-            print("Exception Occured in run experiment")
-            return str(ex).split('.')
+#     except Exception as ex:
+#         key = 'Processing aborted due to error 370001' 
+#         if key in str(ex):
+#             print("Registeration of model completed!!!")
+#             return model_name
+#         else:
+#             print("Exception Occured in run experiment")
+#             return str(ex).split('.')
         
         
 def create_sproc(session, stage, func_name="run_experiment"):
