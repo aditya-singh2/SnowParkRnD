@@ -347,27 +347,44 @@ def initiate_sproc_process(payload, sproc_name="run_experiment"):
     print(sproc_response)
     return sproc_response
 
-# # Initilization
-# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-# print("Creating Snowflake Session object...")
-# session = get_session()
-# stage = create_stage(session)
-# print("Session has been created !")
+# Initilization
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+import uuid
+# project_id = str(uuid.uuid4())
+run_id = str(uuid.uuid4())
+print(run_id)
+# payload-1 (classification Airline Delay dataset)
+exp_data = '''{{
+"source":"EXP", 
+"project_id":"0e0fb803-22db-4d88-9f2f-f6f75b6abcf0", 
+"id":"7bbb5061-54d4-4862-8d47-7fbee388a4d1", 
+"run_id":"{0}", 
+"exp_name": "Final_recipe", 
+"algorithm_type":"classification", 
+"algo_details": {{"snowflake.ml.modeling.xgboost.XGBClassifier": null}}, 
+"dataset": "AIRLINE_DEP_DELAY_10K", 
+"target_column": "DEP_DEL15"}}'''.format(run_id)
 
-# print("Creating stored procedure...")
-# session.sproc.register(func=train_ml_models,
-#                        name="train_ml_models",
-#                        packages=["snowflake-snowpark-python", "snowflake-ml-python"],
-#                        isPermanant=False,
-#                        stage_location=stage,
-#                        replace=True)
-# print("Stored procedure has been created successfully!")
 
-# print("Executing Stored Procedure")
-# procedure_response = session.call("train_ml_models", exp_data)
-# print("Stored Procedure Executed Successfully !")
-# print(procedure_response)
+print("Creating Snowflake Session object...")
+session = get_session()
+stage = create_stage(session)
+print("Session has been created !")
 
-# #Log in mlflow
-# print("Logging in mlflow completed !")
+print("Creating stored procedure...")
+session.sproc.register(func=train_ml_models,
+                       name="train_ml_models",
+                       packages=["snowflake-snowpark-python", "snowflake-ml-python"],
+                       isPermanant=False,
+                       stage_location=stage,
+                       replace=True)
+print("Stored procedure has been created successfully!")
+
+print("Executing Stored Procedure")
+procedure_response = session.call("train_ml_models", exp_data)
+print("Stored Procedure Executed Successfully !")
+print(procedure_response)
+
+#Log in mlflow
+print("Logging in mlflow completed !")
 
