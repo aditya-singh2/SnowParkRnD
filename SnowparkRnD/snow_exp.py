@@ -308,10 +308,10 @@ def run_experiment(session: Session, exp_data: str) -> list:
             return str(ex).split('?')
         
         
-def create_sproc(session, stage, func_name="run_experiment"):
+def create_sproc(session, stage, func, func_name="run_experiment"):
     print("Creating stored procedure...")
     session.custom_package_usage_config['enabled'] = True
-    session.sproc.register(func=run_experiment,
+    session.sproc.register(func=func,
                            name=func_name,
                            packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
                            isPermanant=False,
