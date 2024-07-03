@@ -367,24 +367,30 @@ exp_data = '''{{
 
 
 print("Creating Snowflake Session object...")
-session = get_session()
+exp_details=json.loads(exp_data)
+session = get_session(exp_details.get("dataset"),exp_details.get("project_id"))
 stage = create_stage(session)
 print("Session has been created !")
 
 print("Creating stored procedure...")
-session.sproc.register(func=train_ml_models,
-                       name="train_ml_models",
-                       packages=["snowflake-snowpark-python", "snowflake-ml-python"],
+session.custom_package_usage_config['enabled'] = True
+session.sproc.register(func=run_experiment,
+                       name="run_experiment",
+                       packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
                        isPermanant=False,
                        stage_location=stage,
                        replace=True)
 print("Stored procedure has been created successfully!")
 
-print("Executing Stored Procedure")
-procedure_response = session.call("train_ml_models", exp_data)
+# tagging session
+print("Setting tag to session object: tag= ", run_id)
+session.query_tag=run_id
+
+print("Executing Procedure")
+procedure_response = session.call("run_experiment", exp_data)
+# procedure_response = run_experiment(session, exp_data)
 print("Stored Procedure Executed Successfully !")
 print(procedure_response)
 
 #Log in mlflow
 print("Logging in mlflow completed !")
-
