@@ -338,7 +338,7 @@ async def initiate_sproc_process(payload, sproc_name="run_experiment"):
     print("Session has been created !")
     stage = create_stage(session)
     print("Creating stored procedure...")
-    session.add_import("/notebooks/notebooks/SnowparkRnD/snow_exp.py", import_path="snow_exp")
+#     session.add_import("/notebooks/notebooks/SnowparkRnD/snow_exp.py", import_path="snow_exp")
     create_sproc(session, stage)
     print("Stored procedure has been created successfully!")
     print("Executing Procedure")
