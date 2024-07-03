@@ -349,7 +349,7 @@ def initiate_sproc_process(payload, sproc_name="run_experiment"):
 
 
 
-Initilization
+# Initilization
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 import uuid
 # project_id = str(uuid.uuid4())
