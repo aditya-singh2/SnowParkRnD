@@ -324,7 +324,7 @@ def create_sproc(session, stage, func_name="run_experiment"):
     session.sproc.register(func=run_experiment,
                            name="run_experiment",
                            packages=["snowflake-snowpark-python", "snowflake-ml-python","scikit-learn"],
-                           isPermanant=False,
+                           isPermanant=True,
                            stage_location=stage,
                            replace=True)
     print("Stored procedure has been created successfully!")
