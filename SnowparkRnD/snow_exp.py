@@ -28,21 +28,21 @@ def get_session(dataset, project_id):
     """
     from fosforio.manager import get_conn_details_from_ds_name
     try:
-#         conn = get_conn_details_from_ds_name(dataset, project_id)
-#         print(conn)
-#         region=conn["params"]["READER"]["region"] if conn["params"]["READER"]["cloudPlatform"] is None \
-#                     else conn["params"]["READER"]["region"]+"."+conn["params"]["READER"]["cloudPlatform"]
-#         account = conn['params']['READER']['accountId'] if region is None \
-#                     else conn['params']['READER']['accountId']+"."+region
-#         CONNECTION_PARAMETERS = {
-#             "account": account,
-#             "user":conn['params']['READER']['user'],
-#             "password": conn['params']['READER']['password'],
-#             "role": conn['params']['READER']['role'],
-#             "database": conn['params']['READER']['database'],
-#             "warehouse": conn['params']['READER']['wareHouse'],
-#             "schema": conn['params']['READER']['schema']
-#         }
+        conn = get_conn_details_from_ds_name(dataset, project_id)
+        print(conn)
+        region=conn["params"]["READER"]["region"] if conn["params"]["READER"]["cloudPlatform"] is None \
+                    else conn["params"]["READER"]["region"]+"."+conn["params"]["READER"]["cloudPlatform"]
+        account = conn['params']['READER']['accountId'] if region is None \
+                    else conn['params']['READER']['accountId']+"."+region
+        CONNECTION_PARAMETERS = {
+            "account": account,
+            "user":conn['params']['READER']['user'],
+            "password": conn['params']['READER']['password'],
+            "role": conn['params']['READER']['role'],
+            "database": conn['params']['READER']['database'],
+            "warehouse": conn['params']['READER']['wareHouse'],
+            "schema": conn['params']['READER']['schema']
+        }
         return Session.builder.configs(CONNECTION_PARAMETERS).create()
     except Exception as ex:
         print("Error while creating snowflake session", ex)
